@@ -5,7 +5,7 @@ Homework :
 --> **printMatrix(boolean simulatePrinting)** -- printeaza matricea pentru numerele n<=100(daca n>100, doar se simuleaza aceasta printare, fara afisarea efectiva a elementelor matricei);\
 --> in final, se afiseaza timpul de executie a programului;\
  \
- \ 
+ \
 - Rezultate teste :\
 -> pentru **java Homework/Main 9** se afiseaza :\
 1 2 3 4 5 6 7 8 9 \
