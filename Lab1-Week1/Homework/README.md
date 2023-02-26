@@ -1,8 +1,7 @@
-Compulsory :
-- Compulsory este o Clasa, care are metode specifice pasilor care apar in cerinta.\
-( -> pentru "Generate a random integer n" -- ii corespunde metoda **generateRandomNumber();**\
-  -> pentru "Compute the result obtained after performing the following calculations" -- ii corespunde metoda **changeTheResult(int n);**\
-  -> pentru a afisa cifra de control -- ii corespunde metoda **cifraDeControl(int n);**\
-  -> pentru a afisa mesajul final -- ii corespunde metoda **showTheMagicMessage(int n);**\
-)
+Homework :
+- in metoda .doTheHomework() care se apeleaza din clasa Main, sunt metodele care apelate in aceasta ordine rezolva cerintele date;\
+**inputIsValid(String [] number)** -- verifica daca numarul de parametrii dati de la linia de comanda este 1 si daca este parametru este un numar intreg >=1;\
+**createMatrix()** -- creeaza un "Latin Square" ca o matrice (primul element al fiecarei linii este = nr. liniei);\
+**printMatrix(boolean simulatePrinting)** -- printeaza matricea pentru numerele n<=100(daca n>100, doar se simuleaza aceasta printare, fara afisarea efectiva a elementelor matricei)\
+in final, se afiseaza timpul de executie a programului;\ 
  
