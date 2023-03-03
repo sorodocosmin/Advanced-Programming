@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RegularGraph extends Bonus{
-    private int vertexDegree;
+    private final int vertexDegree;
     boolean itExists = true;
     public RegularGraph ( String [] arg){
         if ( arg.length != 2){
@@ -53,28 +53,6 @@ public class RegularGraph extends Bonus{
         }
     }
 
-    private int nodeOfMaxDegree (int [] arrayOfDegrees){
-        int maxIndex = 0;
-
-        for (int i = 0 ; i < arrayOfDegrees.length ; ++i){
-            if (arrayOfDegrees[i] > arrayOfDegrees[maxIndex])
-                maxIndex = i;
-        }
-        return maxIndex;
-    }
-
-    private int nodeWithMaxDegreeAndDoesntHaveNeighbour ( int [] arrayOfDegrees, int firstNode ){
-        int max_degree = arrayOfDegrees[firstNode];
-        for( int i = max_degree ; i >= 1 ; i --){//firstly, we start with the same degree as the node already Selected
-            for (int j = this.n -1  ; j >= 0 ; j --){
-                if ( firstNode != j && i == arrayOfDegrees[j] && this.adjacencyMatrix[firstNode][j] == 0){
-                    System.out.println("The ege is : " + firstNode + " - " + j);
-                    return j;
-                }
-            }
-        }
-        return -1;//it will never return -1
-    }
     @Override
     public  void createMatrix() {
         if ((this.n * this.vertexDegree) % 2 == 1) {
@@ -82,10 +60,12 @@ public class RegularGraph extends Bonus{
             this.itExists = false;
             return;
         }
+
         this.populateMatrixWith0();
-        for (int i = 0; i < this.n; ++i) {
+
+        for (int i = 0; i < this.n; ++i) {//considering all nodes put in a circle, node i will have as neighbours the closest k nodes
             for (int k = 1; k <= ( (this.vertexDegree%2 == 1) ? (this.vertexDegree - 1) / 2 : this.vertexDegree/2); ++k) {//every i node will have i+1 .. i+k/2 and i-1 .. i-k/2 as neighbours
-                this.adjacencyMatrix[i][Math.floorMod(i + k, this.n)] = this.adjacencyMatrix[Math.floorMod(i + k, this.n)][i] = 1;//considering all nodes put in a circle, node i will have as neighbours the closest k nodes
+                this.adjacencyMatrix[i][Math.floorMod(i + k, this.n)] = this.adjacencyMatrix[Math.floorMod(i + k, this.n)][i] = 1;
                 this.adjacencyMatrix[i][Math.floorMod(i - k, this.n)] = this.adjacencyMatrix[Math.floorMod(i - k, this.n)][i] = 1;
             }
             if (this.vertexDegree % 2 == 1){//the k_th neighbour will be the opposite node
