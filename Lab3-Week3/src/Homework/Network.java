@@ -11,6 +11,9 @@ public class Network {
     public void addNode ( Node node ){
         this.listOfNodes.add(node);
     }
+    public List<Node> getListOfNodes(){
+        return this.listOfNodes;
+    }
 
     public int importanceNode(Node node){
         if(this.listOfNodes.indexOf(node) != -1){

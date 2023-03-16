@@ -17,6 +17,7 @@ public abstract class Person implements Comparable<Person>, Node{
     @Override
     public void addRelation(Node node, String typeOfRelation){
         this.relations.put(node,typeOfRelation);
+        node.getRelations().put(this,typeOfRelation);
     }
 
     @Override
@@ -30,5 +31,11 @@ public abstract class Person implements Comparable<Person>, Node{
     @Override
     public Map<Node, String> getRelations() {
         return this.relations;
+    }
+
+    public void printRelations(){
+        for( Map.Entry<Node,String> neighbour : this.relations.entrySet()){
+            System.out.println(neighbour.getKey() + " - relation : " + neighbour.getValue());
+        }
     }
 }
