@@ -33,7 +33,7 @@ public class MainFrame extends JFrame {
         add(configPanel, BorderLayout.NORTH);
 
         this.controlPanel = new ControlPanel(this);
-        add(controlPanel,BorderLayout.SOUTH);
+        getContentPane().add(controlPanel,BorderLayout.SOUTH);
 
 
         canvas = new DrawingPanel(this);

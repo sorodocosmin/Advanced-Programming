@@ -1,11 +1,6 @@
 package org.example.Compulsory;
 
-import org.example.Main;
-
 import javax.swing.*;
-import javax.swing.plaf.SliderUI;
-import javax.swing.plaf.basic.BasicComboBoxUI;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class ConfigPanel extends JPanel {
@@ -49,10 +44,13 @@ public class ConfigPanel extends JPanel {
 
         add(probabilityLabel);
         add(probabilityCombo);
+
         add(createButton);
     }
     private void onGenerateGraph(ActionEvent e){
-        this.frame.getCanvas().repaint();
+        //this.frame.getCanvas().setShouldRepaint(true);
+        this.frame.getCanvas().createBoard();
+        //this.frame.getCanvas().setShouldRepaint(false);
     }
 
 }
