@@ -1,5 +1,8 @@
 package org.example.Compulsory;
 
+import org.example.Homework.Edge;
+import org.example.Homework.Game;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -10,101 +13,157 @@ public class DrawingPanel extends JPanel {
 
     private final MainFrame frame;
     final static int W = 800, H = 500, RADIUS_VERTEX = 10;
-    private int nrVertices, probability;
-    private int coordX[], coordY[];
+
+    private Game game;
 
     private BufferedImage image;
-    private Graphics2D graphics;
+    private Graphics2D graphics2D;
 
     public DrawingPanel(MainFrame frame){
         this.frame = frame;
         createOffScreenImage();
-        initPanel();
         createBoard();
+        initPanel();
         setBackground(Color.gray);
+    }
+
+    public Graphics2D getGraphics2D() {
+        return graphics2D;
+    }
+
+    public void setGraphics2D(Graphics2D graphics2D) {
+        this.graphics2D = graphics2D;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+        this.createBoard(this.game);
     }
 
     private void initPanel(){
         setPreferredSize(new Dimension(W,H));
         setBorder(BorderFactory.createEtchedBorder());
 
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e){
-                System.out.println("mouse pressed at : " + e.getX() + " - " + e.getY());
-                repaint();
-            }
-        });
+            this.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if(game.getGameIsFinished()){
+                        Font font = new Font("Arial",Font.PLAIN,24);
+                        graphics2D.setFont(font);
+                        if(game.isPlayer1Turn()) {
+                            graphics2D.setColor(Game.colorPlayer2);
+                            graphics2D.drawString("Player 2 WON ", 20, 20);
+                            graphics2D.setColor(Color.GRAY);
+                        }
+                        else{
+                            graphics2D.setColor(Game.colorPlayer1);
+                            graphics2D.drawString("Player 1 WON", 20,20);
+                            graphics2D.setColor(Color.GRAY);
+                        }
+                        repaint();
+                    }
+                    else {
+                        game.playerClicked(e.getX(), e.getY(), graphics2D);
+                    }
+                    repaint();
+                }
+            });
     }
 
     private void createOffScreenImage(){
         this.image = new BufferedImage(W,H,BufferedImage.TYPE_INT_ARGB);
-        this.graphics = image.createGraphics();
+        this.graphics2D = image.createGraphics();
 
 
-        graphics.setRenderingHint(
+        graphics2D.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.setColor(Color.GRAY);
+        graphics2D.setColor(Color.GRAY);
 
-        graphics.fillRect(0,0,1000,1000);
+        graphics2D.fillRect(0,0,W,H);
     }
 
     final void createBoard(){
 
-        System.out.println("Board created");
-        this.nrVertices = (Integer) this.frame.getConfigPanel().getDotsSpinner().getValue();
-        this.probability = (Integer) this.frame.getConfigPanel().getProbabilityCombo().getSelectedItem();
+        int nrVertices = (Integer) this.frame.getConfigPanel().getDotsSpinner().getValue();
+        int probability = (Integer) this.frame.getConfigPanel().getProbabilityCombo().getSelectedItem();
 
         this.createOffScreenImage();
 
-        this.createVertices();
+        this.createGame(nrVertices,probability);
+
         this.drawLines();
         this.drawVertices();
 
         repaint();
 
-
-
-
     }
 
-    private void createVertices(){
-        int x0 = W/2 ; int y0 = H/2;
-        int radius = H/2 - 10;
+    final void createBoard(Game game){
 
-        double alpha = 2 * Math.PI / nrVertices; //the angle
-        this.coordX = new int[ this.nrVertices];
-        this.coordY = new int[ this.nrVertices];
+        this.createOffScreenImage();
 
-        for( int i = 0; i< this.nrVertices ; ++i) {
-            this.coordX[i] = x0 + (int) (radius * Math.cos(alpha * i));
-            this.coordY[i] = y0 + (int) (radius * Math.sin(alpha * i));
+        this.drawLines();
+        this.drawVertices();
 
+        repaint();
+    }
+
+    private void createGame(int nrVertices, int probability){
+
+        this.game = new Game(nrVertices,probability,W,H);
+    }
+
+     void drawVertices(){
+        this.graphics2D.setColor(Color.BLACK);
+
+        for(int i = 0, n = this.game.getNrVertices(); i < n ; ++i){
+            this.graphics2D.fillOval(this.game.getCoordinateX()[i] - RADIUS_VERTEX, this.game.getCoordinateY()[i] - RADIUS_VERTEX, 2 * RADIUS_VERTEX, 2 * RADIUS_VERTEX);
+            this.graphics2D.setColor(Color.MAGENTA);
+            this.graphics2D.drawString(String.valueOf(i),this.game.getCoordinateX()[i] - RADIUS_VERTEX/2,this.game.getCoordinateY()[i] + RADIUS_VERTEX/2);
+            this.graphics2D.setColor(Color.BLACK);
 
         }
-
+        this.graphics2D.setColor(Color.GRAY);
+        repaint();
 
     }
 
-    private void drawVertices(){
-        this.graphics.setColor(Color.BLACK);
-        for(int i = 0; i < this.nrVertices ; ++i){
-            this.graphics.fillOval(this.coordX[i] - RADIUS_VERTEX, this.coordY[i] - RADIUS_VERTEX, 2 * RADIUS_VERTEX, 2 * RADIUS_VERTEX);
-        }
-        this.graphics.setColor(Color.GRAY);
-    }
+     void drawLines(){
+        this.graphics2D.setColor(Color.BLACK);
 
-    private void drawLines(){
-        this.graphics.setColor(Color.BLACK);
-        for (int i = 0; i < this.nrVertices - 1; ++i) {
-            for (int j = i + 1; j < this.nrVertices; j++) {
-                int randomProb = (int) (Math.random() * 100);
-                if (randomProb <= probability) {//create edge
-                    this.graphics.drawLine(coordX[i], coordY[i], coordX[j], coordY[j]);
+        boolean [] visited = new boolean[this.game.getNrVertices()];
+
+        for(int i=0 , n = this.game.getNrVertices() ; i< n ; ++i){
+            for( Edge edge : this.game.getAdjacencyList().get(i)){
+                if (!visited[edge.getNode2()]){
+                    if(edge.isColored()){
+                        this.graphics2D.setColor(edge.getColor());
+                        this.graphics2D.drawLine(  this.game.getCoordinateX()[i],this.game.getCoordinateY()[i],
+                                this.game.getCoordinateX()[edge.getNode2()],this.game.getCoordinateY()[edge.getNode2()]);
+                        this.graphics2D.setColor(Color.BLACK);
+                    }
+                    else {
+                        this.graphics2D.drawLine(this.game.getCoordinateX()[i], this.game.getCoordinateY()[i],
+                                this.game.getCoordinateX()[edge.getNode2()], this.game.getCoordinateY()[edge.getNode2()]);
+                    }
                 }
             }
+            visited[i] = true;
         }
-        this.graphics.setColor(Color.GRAY);
+
+        this.graphics2D.setColor(Color.GRAY);
     }
 
     @Override
@@ -116,7 +175,6 @@ public class DrawingPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        System.out.println("Painted");
         g.drawImage(this.image,0,0,this);
     }
 
