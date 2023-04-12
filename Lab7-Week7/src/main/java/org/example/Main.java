@@ -1,7 +1,7 @@
 package org.example;
 
-import org.example.Compulsory.Exploration;
-import org.example.Compulsory.Robot;
+import org.example.compulsory.Exploration;
+import org.example.compulsory.Robot;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,5 +13,12 @@ public class Main {
 
         explore.start();
 
+
+
+
+
+
+        // Homework : - un DFS in care tinem minte celulele in care am fost
+        // Bonus : - implementarea algoritmilor in maniera concurenta, pentru un API de grafuri ci nu concret, pt problema noastra :) ;
     }
 }

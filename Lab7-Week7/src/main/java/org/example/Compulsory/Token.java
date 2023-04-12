@@ -1,4 +1,4 @@
-package org.example.Compulsory;
+package org.example.compulsory;
 
 public class Token {
     private final int number ;

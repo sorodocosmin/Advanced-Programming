@@ -1,6 +1,4 @@
-package org.example.Compulsory;
-
-import java.util.Arrays;
+package org.example.compulsory;
 
 public class ExplorationMap {
     private final Cell[][] matrix;
@@ -28,6 +26,7 @@ public class ExplorationMap {
     public boolean visit (int row, int col, Robot robot){
         synchronized (this.matrix[row][col]){
             if(!this.matrix[row][col].isVisited()){
+
                 this.matrix[row][col].setTokens(robot.getExplore().getSharedMemory().extractTokens(this.sizeMatrix));
                 this.matrix[row][col].setVisited(true);
 
@@ -35,8 +34,8 @@ public class ExplorationMap {
                 System.out.println(robot.getName() + " inserted successfully tokens in " + row + " - " + col);
                 return true;
             }
+            return false;
         }
-        return false;
     }
 
     @Override

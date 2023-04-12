@@ -1,6 +1,5 @@
-package org.example.Compulsory;
+package org.example.compulsory;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
