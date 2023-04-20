@@ -1,9 +1,17 @@
 package org.example.compulsory;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
+import static java.lang.Thread.sleep;
+
 public class ExplorationMap {
     private final Cell[][] matrix;
     private final int sizeMatrix;
     private int cellsVisited = 0;
+
+    private BufferedWriter writerFile;
 
     public ExplorationMap(int n){
         this.sizeMatrix = n;
@@ -14,6 +22,17 @@ public class ExplorationMap {
                 this.matrix[i][j] = new Cell();
             }
         }
+
+        try {
+            this.writerFile = new BufferedWriter(new FileWriter("output.txt"));
+            this.writerFile.write("Exploration started");
+            this.writerFile.flush();
+        }
+        catch (IOException e) {
+            System.out.println("WRONG FILE PATH");
+            throw new RuntimeException(e);
+        }
+
     }
 
     public int getSizeMatrix(){
@@ -22,16 +41,36 @@ public class ExplorationMap {
     public boolean finishedVisited(){
             return this.cellsVisited == this.sizeMatrix*this.sizeMatrix;
     }
+    public boolean isVisited(int row, int col){
+        return this.matrix[row][col].isVisited();
+    }
 
     public boolean visit (int row, int col, Robot robot){
         synchronized (this.matrix[row][col]){
             if(!this.matrix[row][col].isVisited()){
-
-                this.matrix[row][col].setTokens(robot.getExplore().getSharedMemory().extractTokens(this.sizeMatrix));
+                int nrTokensWhichWillBeInserted = this.sizeMatrix;
+                this.matrix[row][col].setTokens(robot.getExplore().getSharedMemory().extractTokens(nrTokensWhichWillBeInserted));
                 this.matrix[row][col].setVisited(true);
+                robot.setTokensInserted(robot.getTokensInserted() + nrTokensWhichWillBeInserted);
 
                 this.cellsVisited ++;
-                System.out.println(robot.getName() + " inserted successfully tokens in " + row + " - " + col);
+
+                try {//write to file what cell visited
+                    this.writerFile.write(robot.getName() + " inserted successfully tokens in " + row + " - " + col + "\n");
+                    this.writerFile.flush();
+                }
+                catch (IOException e) {
+                    System.out.println("Error at writing in file");;
+                }
+
+                robot.addCellsWhichWillBeVisited(row,col);//it will be added all the neighbours of that node/point
+
+                try {
+                    sleep(1000);
+                }
+                catch (InterruptedException e) {
+                    System.err.print(e);
+                }
                 return true;
             }
             return false;

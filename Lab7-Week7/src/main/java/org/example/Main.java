@@ -2,16 +2,37 @@ package org.example;
 
 import org.example.compulsory.Exploration;
 import org.example.compulsory.Robot;
+import org.example.homework.menu.MenuMain;
 
 public class Main {
     public static void main(String[] args) {
 
-        var explore = new Exploration(5);
-        explore.addRobot(new Robot("Wall-E"));
-        explore.addRobot(new Robot("R2D2"));
-        explore.addRobot(new Robot("Optimus Prime"));
+//        Robot robot1 = new Robot("Wall-E");
+//        Robot robot2 = new Robot("R2D2");
+//        Robot robot3 = new Robot("Optimus Prime");
+//        var explore = new Exploration(5);
+//        explore.addRobot(robot1);
+//        explore.addRobot(robot2);
+//        explore.addRobot(robot3);
+//
+//        explore.start(new Robot("Wall-E"));
+//        explore.start(new Robot("R2D2"));
+//
+//        Scanner keyboard = new Scanner(System.in);
+//        System.out.println("enter an integer");
+//        int myint = keyboard.nextInt();
+//        if(myint == 1){
+//            explore.stop(robot2);
+//        }
 
-        explore.start();
+        MenuMain menuMain = new MenuMain(10);
+
+        while ( !menuMain.isExit() ){
+
+            menuMain.printMenu();
+            menuMain.handleOption();
+
+        }
 
 
 
