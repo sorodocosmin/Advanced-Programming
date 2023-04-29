@@ -5,6 +5,8 @@ import org.example.Homework.Game;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -12,7 +14,7 @@ import java.awt.image.BufferedImage;
 public class DrawingPanel extends JPanel {
 
     private final MainFrame frame;
-    final static int W = 800, H = 500, RADIUS_VERTEX = 10;
+    int W = 800, H = 500, RADIUS_VERTEX = 10;
 
     private Game game;
 
@@ -21,6 +23,16 @@ public class DrawingPanel extends JPanel {
 
     public DrawingPanel(MainFrame frame){
         this.frame = frame;
+        this.frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                W = getWidth();
+                H = getHeight();
+                createOffScreenImage();
+                createBoard();
+                initPanel();
+            }
+        });
         createOffScreenImage();
         createBoard();
         initPanel();
@@ -56,6 +68,7 @@ public class DrawingPanel extends JPanel {
         setPreferredSize(new Dimension(W,H));
         setBorder(BorderFactory.createEtchedBorder());
 
+
             this.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -83,6 +96,7 @@ public class DrawingPanel extends JPanel {
     }
 
     private void createOffScreenImage(){
+
         this.image = new BufferedImage(W,H,BufferedImage.TYPE_INT_ARGB);
         this.graphics2D = image.createGraphics();
 

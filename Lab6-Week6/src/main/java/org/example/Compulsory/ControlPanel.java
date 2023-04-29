@@ -80,7 +80,6 @@ public class ControlPanel extends JPanel {
             XMLDecoder decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream("game.xml")));
             Game game = (Game) decoder.readObject();
             this.frame.getCanvas().setGame(game);
-            System.out.println("The game was : " + game);
         }
         catch (FileNotFoundException ex){
             System.out.println("Couldn't deserialize object");

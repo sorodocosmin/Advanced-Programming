@@ -1,7 +1,6 @@
 package org.example.Homework;
 
 import java.awt.*;
-import java.beans.XMLEncoder;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -185,17 +184,15 @@ public class Game implements Serializable {
         int []neighbours1Colored = new int[ this.adjacencyList.get(this.lastEdgeColored.getNode1()).size()];
         for(Edge e : this.adjacencyList.get(this.lastEdgeColored.getNode1())){
             if(e.isColored()) {
-                if( e.getColor()==lastEdgeColored.getColor()) {
+                if( e.getColor().equals(lastEdgeColored.getColor())) {
                     neighbours1Colored[k] = e.getNode2();
-                    System.out.print(e.getNode2() + " ");
                     k++;
                 }
             }
         }
         for( Edge e : this.adjacencyList.get(this.lastEdgeColored.getNode2())){
             if(e.isColored()){
-                if(e.getColor() == this.lastEdgeColored.getColor()){//verify if those nodes don't have a common neighbour
-                    System.out.print(e.getNode2() + " ");
+                if(e.getColor().equals(lastEdgeColored.getColor())){//verify if those nodes don't have a common neighbour
                     for( int i=0; i< k ; ++i ){
                         if(neighbours1Colored[i] == e.getNode2()){
                             return true;
@@ -216,6 +213,7 @@ public class Game implements Serializable {
         }
     }
 
+    //no usage!
     private boolean isOnLine(int x1,int y1, int x2,int y2,int x3,int y3){//it doesn't work, why ?
         //equation : (y-y1) / (y2-y1) == (x-x1) / (x2-x1) --> y(x2 - x1) - y1(x2 - x1) == x (y2-y1) - x1(y2-y1) --> y = ( x(y2-y1) - x1(y2-y1) + y1(x2-x1) ) / (x2 - x1)
         double expectedY1 = (double) (x1*(y3-y2) - x2*(y2-y1) + y2*(x3-x2) ) / (x3-x2);
