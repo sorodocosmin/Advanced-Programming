@@ -1,6 +1,6 @@
 package org.example;
 
-import org.example.Compulsory.MainFrame;
+import org.example.compulsory.MainFrame;
 
 public class Main {
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
-package org.example.Compulsory;
+package org.example.compulsory;
 
-import org.example.Homework.Game;
+import org.example.homework.Game;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -9,15 +9,17 @@ import java.awt.event.ActionEvent;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
-import java.sql.SQLOutput;
 
 public class ControlPanel extends JPanel {
     private final MainFrame frame;
-    private JButton exitButton = new JButton("Exit");
+    private JButton exitButton = new JButton("Exit ❌ ");
     private JButton saveButton = new JButton("Save Game");
     private JButton savePngButton = new JButton("Save Game As Image");
     private JButton loadButton = new JButton("Load Previous Saved Game");
-    private JButton resetButton = new JButton("Reset");
+    private JButton resetButton = new JButton("Reset \uD83D\uDD04");
+    private JComboBox<String> dificultyLevelComboBox = new JComboBox<String>(new String[] {"Easy", "Medium"});
+
+    private JLabel playWithAiLabel = new JLabel("Play with AI? ( \uD83E\uDD16 )");
 
     public ControlPanel(MainFrame frame){
         this.frame = frame;
@@ -25,14 +27,25 @@ public class ControlPanel extends JPanel {
     }
 
     private void init(){
+        setLayout(new GridLayout(3,2));
+        //setLayout(new FlowLayout());
 
-        //setLayout(new GridLayout(3,2));
-        setLayout(new FlowLayout());
+        this.exitButton.setBackground(new Color(255, 109, 96));
+
+        JButton playAI = new JButton();
+        playAI.setLayout(new GridLayout(1,2));
+        playAI.add(playWithAiLabel);
+        playAI.add(dificultyLevelComboBox);
+
+        this.dificultyLevelComboBox.setSelectedItem("Easy");
+
         add(this.savePngButton);
         add(this.saveButton);
         add(this.loadButton);
         add(this.resetButton);
+        add(playAI);
         add(this.exitButton);
+
 
         savePngButton.addActionListener(this::saveAsPngGame);
 
@@ -42,7 +55,24 @@ public class ControlPanel extends JPanel {
 
         resetButton.addActionListener(this::resetGame);
 
+        playAI.addActionListener(this::playWithAI);
+
         exitButton.addActionListener(this::exitGame);
+    }
+
+    private void playWithAI( ActionEvent e){
+        // Create a new combo box for selecting difficulty level
+        this.frame.getCanvas().getGame().setPlayWithAI(true);
+        if(this.dificultyLevelComboBox.getSelectedItem().equals("Easy")){
+            System.out.println("Selected difficulty : " + this.dificultyLevelComboBox.getSelectedItem());
+            this.frame.getCanvas().getGame().setMode(1);
+        }
+
+        else if (this.dificultyLevelComboBox.getSelectedItem().equals("Medium")) {
+            System.out.println("Selected difficulty : " + this.dificultyLevelComboBox.getSelectedItem());
+            this.frame.getCanvas().getGame().setMode(2);//medium
+        }
+
     }
 
     private void exitGame(ActionEvent e){

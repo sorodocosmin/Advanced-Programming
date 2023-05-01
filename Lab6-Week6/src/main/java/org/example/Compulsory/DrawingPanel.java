@@ -1,14 +1,11 @@
-package org.example.Compulsory;
+package org.example.compulsory;
 
-import org.example.Homework.Edge;
-import org.example.Homework.Game;
+import org.example.homework.Edge;
+import org.example.homework.Game;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class DrawingPanel extends JPanel {
@@ -28,8 +25,12 @@ public class DrawingPanel extends JPanel {
             public void componentResized(ComponentEvent e) {
                 W = getWidth();
                 H = getHeight();
+                if(H > W){
+                    H = W;
+                }
                 createOffScreenImage();
-                createBoard();
+                game.setWidthAndHeight(W,H);
+                createBoard(game);
                 initPanel();
             }
         });
@@ -68,21 +69,29 @@ public class DrawingPanel extends JPanel {
         setPreferredSize(new Dimension(W,H));
         setBorder(BorderFactory.createEtchedBorder());
 
+        // Remove any existing mouse listeners -> if the window is resized, it will be added multiple times
+        for (MouseListener listener : getMouseListeners()) {
+            removeMouseListener(listener);
+        }
 
             this.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mousePressed(MouseEvent e) {
-                    if(game.getGameIsFinished()){
-                        Font font = new Font("Arial",Font.PLAIN,24);
+                    if(game.getGameIsFinished()) {
+                        Font font = new Font("Arial", Font.PLAIN, 24);
                         graphics2D.setFont(font);
-                        if(game.isPlayer1Turn()) {
+
+                        if (game.getPlayerWhoWon() == 0) {
+                            graphics2D.setColor(Color.ORANGE);
+                            graphics2D.drawString("EQUALITY", 20, 20);
+                            graphics2D.setColor(Color.GRAY);
+                        } else if (game.getPlayerWhoWon() == 2) {
                             graphics2D.setColor(Game.colorPlayer2);
                             graphics2D.drawString("Player 2 WON ", 20, 20);
                             graphics2D.setColor(Color.GRAY);
-                        }
-                        else{
+                        } else {
                             graphics2D.setColor(Game.colorPlayer1);
-                            graphics2D.drawString("Player 1 WON", 20,20);
+                            graphics2D.drawString("Player 1 WON", 20, 20);
                             graphics2D.setColor(Color.GRAY);
                         }
                         repaint();

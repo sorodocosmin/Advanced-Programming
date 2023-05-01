@@ -1,4 +1,6 @@
-package org.example.Homework;
+package org.example.homework;
+
+import org.example.bonus.AlgorithmDetColorNextEdge;
 
 import java.awt.*;
 import java.io.Serializable;
@@ -13,12 +15,22 @@ public class Game implements Serializable {
     private boolean isPlayer1Turn = true, gameIsFinished = false;
     private Map<Integer, List<Edge>> adjacencyList;//every for every node, it will correspond a list of edges because it will be easier to check if one edge is colored
     private int nrVertices;
+    private int nrEdges;
+    private int nrEdgesColored;
+    private int playerWhoWon = 0;//by default it's equality
+    private boolean playWithAI = false;
+    private int mode = 1;//easy
+    private int width, height;
+
     //@JSONignore
     private Edge lastEdgeColored;
     public Game(){
 
     }
     public Game(int nrVertices, int probability, int width, int height){
+        this.nrEdges = 0;
+        this.nrEdgesColored = 0;
+
         this.nrVertices = nrVertices;
 
         this.coordinateX = new int[nrVertices];
@@ -83,6 +95,76 @@ public class Game implements Serializable {
         this.gameIsFinished = gameIsFinished;
     }
 
+    public void setNrEdges(int nrEdges) {
+        this.nrEdges = nrEdges;
+    }
+
+    public void setNrEdgesColored(int nrEdgesColored) {
+        this.nrEdgesColored = nrEdgesColored;
+    }
+
+    public void setPlayerWhoWon(int playerWhoWon) {
+        this.playerWhoWon = playerWhoWon;
+    }
+
+    public void setPlayWithAI(boolean playWithAI) {
+        this.playWithAI = playWithAI;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
+    }
+
+    public void setLastEdgeColored(Edge lastEdgeColored) {
+        this.lastEdgeColored = lastEdgeColored;
+    }
+
+    public int getPlayerWhoWon() {
+        return playerWhoWon;
+    }
+
+    public int getNrEdges() {
+        return nrEdges;
+    }
+
+    public int getNrEdgesColored() {
+        return nrEdgesColored;
+    }
+
+    public boolean isPlayWithAI() {
+        return playWithAI;
+    }
+
+    public int getWith() {
+        return width;
+    }
+
+    public void setWith(int with) {
+        this.width = with;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public Edge getLastEdgeColored() {
+        return lastEdgeColored;
+    }
+
+    public void setWidthAndHeight(int width, int height){
+        this.height = height;
+        this.width = width;
+        this.createVertices(this.width, this.height);
+    }
+
     private void createVertices(int width, int height){
         int x0 = width/2 ; int y0 = height/2;
         int radius = height/2 - 10;
@@ -105,6 +187,7 @@ public class Game implements Serializable {
                     Edge edge2 = new Edge(j,i);
                     this.adjacencyList.get(i).add(edge1);//for the arrayList of node i, we add the node j as well;
                     this.getAdjacencyList().get(j).add(edge2);
+                    this.nrEdges++;
                 }
             }
         }
@@ -121,36 +204,132 @@ public class Game implements Serializable {
                     if(isPointOnLineSegment(this.coordinateX[i],this.coordinateY[i],this.coordinateX[edge.getNode2()],this.coordinateY[edge.getNode2()],mouseX,mouseY)){
                         ok = true;//if an edge was selected, we color it with the respective color
                         edge.setColored(true);//the edge ij and also edge ji
-                        for( Edge edgeReverse : this.adjacencyList.get(edge.getNode2())){
-                            if(edgeReverse.getNode2() == i){
-                                edgeReverse.setColored(true);
-                                if(this.isPlayer1Turn){//set the specific color for edges
-                                    graphics.setColor(colorPlayer1);
-                                    edge.setColor(colorPlayer1);
-                                    edgeReverse.setColor(colorPlayer1);
-                                    this.isPlayer1Turn = false;
-                                }
-                                else{
-                                    graphics.setColor(colorPlayer2);
-                                    edge.setColor(colorPlayer2);
-                                    edgeReverse.setColor(colorPlayer2);
-                                    this.isPlayer1Turn = true;
-                                }
-                                break;
-                            }
+                        this.nrEdgesColored ++;
+
+                        if(nrEdgesColored == this.nrEdges){
+                            this.gameIsFinished = true;
                         }
+
+                        this.setColoredReversedEdge(edge);
+
+                        if(this.isPlayer1Turn){//set the specific color for edges
+                            graphics.setColor(colorPlayer1);
+                            edge.setColor(colorPlayer1);
+                        }
+                        else{
+                            graphics.setColor(colorPlayer2);
+                            edge.setColor(colorPlayer2);
+                        }
+
+                        this.switchPlayer();
+
                         this.lastEdgeColored = edge;
                         graphics.drawLine(this.coordinateX[i],this.coordinateY[i],this.coordinateX[edge.getNode2()],this.coordinateY[edge.getNode2()]);
                         graphics.setColor(Color.GRAY);
                         if(this.formedATriangle()) {
                             this.gameIsFinished = true;
+                            this.playerWhoWon = this.isPlayer1Turn ? 2 : 1 ;
                         }
+
+                        if(!this.gameIsFinished){
+                            if(this.playWithAI){
+                                this.colorTheNextEdge(graphics);
+
+                                if(this.formedATriangle()) {
+                                    this.gameIsFinished = true;
+                                    this.playerWhoWon = this.isPlayer1Turn ? 2 : 1 ;
+                                }
+                            }
+                        }
+
                         break;
                     }
                 }
             }
         }
 
+    }
+
+    private void setColoredReversedEdge(Edge edge){
+
+        for( Edge edgeReverse : this.adjacencyList.get(edge.getNode2())){
+            if(edgeReverse.getNode2() == edge.getNode1()){
+                edgeReverse.setColored(true);
+                if(this.isPlayer1Turn){//set the specific color for edges
+                    edgeReverse.setColor(colorPlayer1);
+                }
+                else{
+                    edgeReverse.setColor(colorPlayer2);
+                }
+                break;
+            }
+        }
+
+    }
+
+    private void colorTheNextEdge(Graphics2D graphics){
+
+        AlgorithmDetColorNextEdge alg = new AlgorithmDetColorNextEdge(this.adjacencyList);
+
+        if(this.isPlayer1Turn){
+            alg.setColorPlayer(colorPlayer1);
+        }
+        else{
+            alg.setColorPlayer(colorPlayer2);
+        }
+        if(this.mode==1){
+            Edge edge = alg.getEdgeInEasyMode();
+            this.colorSpecificEdge(edge,graphics);
+            this.setColoredReversedEdge(edge);
+        }
+        else if( this.mode == 2){
+            Edge edge = alg.getEdgeInMediumMode();
+            this.colorSpecificEdge(edge,graphics);
+            this.setColoredReversedEdge(edge);
+        }
+
+        this.switchPlayer();
+
+    }
+
+    private void colorSpecificEdge(Edge edge, Graphics2D graphics) {
+
+        boolean ok = false;
+
+        for (int i = 0; i < this.nrVertices && !ok; ++i) {
+            for (Edge e : this.adjacencyList.get(i)) {
+                if (edge.getNode1() == e.getNode1() && edge.getNode2() == e.getNode2()) {
+                    e.setColored(true);
+                    if (this.isPlayer1Turn) {
+                        e.setColor(colorPlayer1);
+                        graphics.setColor(colorPlayer1);
+                    }
+                    else{
+                        e.setColor(colorPlayer2);
+                        graphics.setColor(colorPlayer2);
+                    }
+
+                    this.lastEdgeColored = e;
+
+                    graphics.drawLine(this.coordinateX[i],this.coordinateY[i],this.coordinateX[e.getNode2()],this.coordinateY[e.getNode2()]);
+                    graphics.setColor(Color.GRAY);
+
+                    System.out.println("The AI colored the edge " + e.getNode1() + " " + e.getNode2());
+
+                    break;
+                }
+            }
+        }
+    }
+
+    private void switchPlayer(){
+
+        if(this.isPlayer1Turn){
+            this.isPlayer1Turn=false;
+        }
+        else{
+            this.isPlayer1Turn=true;
+        }
     }
 
     boolean isPointOnLineSegment(int x1, int y1, int x2, int y2, int a1, int a2) {
@@ -205,6 +384,8 @@ public class Game implements Serializable {
     }
 
     public void resetGame(){
+        this.nrEdgesColored = 0;
+
         this.gameIsFinished = false;
         for( int i=0 ; i< this.nrVertices ; ++i){
             for( Edge e : this.adjacencyList.get(i)){

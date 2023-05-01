@@ -1,6 +1,7 @@
-package org.example.Compulsory;
+package org.example.compulsory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class ConfigPanel extends JPanel {
@@ -24,6 +25,9 @@ public class ConfigPanel extends JPanel {
     }
 
     private void init(){
+
+        setLayout(new FlowLayout());
+
         //create the label and the spineer
         dotsLabel = new JLabel("Number of dots:");
         dotsSpinner = new JSpinner(new SpinnerNumberModel(6,3,100,1));
@@ -37,6 +41,7 @@ public class ConfigPanel extends JPanel {
 
 
         this.createButton = new JButton("Create Graph");
+        createButton.setBackground(new Color(65, 100, 74));
         createButton.addActionListener(this::onGenerateGraph);
 
         add(dotsLabel);
@@ -46,6 +51,13 @@ public class ConfigPanel extends JPanel {
         add(probabilityCombo);
 
         add(createButton);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        add(createButton, gbc);
+
     }
     private void onGenerateGraph(ActionEvent e){
         //this.frame.getCanvas().setShouldRepaint(true);
