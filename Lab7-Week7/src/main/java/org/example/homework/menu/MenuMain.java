@@ -13,7 +13,7 @@ public class MenuMain implements Menu {
     final private List<Integer> identifierOptions;
     final private List<String> textOptions;
     private int currentOption;
-    private Exploration exploration;
+    private final Exploration exploration;
 
     private boolean exit = false;
 

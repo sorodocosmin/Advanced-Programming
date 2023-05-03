@@ -63,7 +63,7 @@ public class TimeKeeper extends Thread {
                         this.graphics2D.drawString(actualTime, 5, 40);
                     }
                     this.graphics2D.setColor(Color.GRAY);
-                    
+
                 }
 
             }
