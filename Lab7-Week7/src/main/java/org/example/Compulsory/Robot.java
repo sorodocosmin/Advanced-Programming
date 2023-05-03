@@ -45,6 +45,11 @@ public class Robot implements Runnable{
 
     public void setPause(boolean pause) {
         this.pause = pause;
+        if(!pause){
+            synchronized (this) {
+                this.notify();
+            }
+        }
     }
 
     public int getPauseTime() {
@@ -90,17 +95,19 @@ public class Robot implements Runnable{
                 this.explore.getMap().visit(row, col, this);
 
                 this.cellsWhichWillBeVisited.removeFirst();
-
+//TREBUIE FACUT CU WAIT si NOTIFY din start
                 //this.addCellsWhichWillBeVisited(row,col);
                 if (this.pause) {
                     if ((this).pauseTime == -1) {//the robot is paused for an undefined time limit
-                        while (this.pause && !this.explore.getMap().finishedVisited()) {//the exploration was not finished by other robots
                             try {
-                                sleep(1000);
+                                while (this.pause){
+                                    synchronized(this) {
+                                        this.wait();
+                                    }
+                                }
                             } catch (InterruptedException e) {
                                 System.out.println(e);
                             }
-                        }
                     } else {//a robot is paused for a specific time
                         this.pause = false;
                         try {
