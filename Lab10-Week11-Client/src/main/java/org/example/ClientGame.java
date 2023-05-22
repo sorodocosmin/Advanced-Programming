@@ -101,13 +101,13 @@ public class ClientGame {
 
             this.mainFrame.getCanvas().drawNamePlayer();
 
-            System.out.println("I am player" + nrPlayer + " and I have " + nrMinutes + " minutes to play");
+            //System.out.println("I am player" + nrPlayer + " and I have " + nrMinutes + " minutes to play");
 
             this.mainFrame.getCanvas().getGame().setStarted(true);
 
         } else if (ReceiveCommandClient.isSubmitMove(response)) {
 
-            System.out.println("The other player made a move");
+            //ystem.out.println("The other player made a move");
             int line = ReceiveCommandClient.getNrLine(response);
             int column = ReceiveCommandClient.getNrColumn(response);
 
